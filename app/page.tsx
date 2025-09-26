@@ -12,13 +12,14 @@ import AirQualityCard from '@/components/aqi';
 export default function Home() {
   const [weather, setWeather] = useState<any>(null)
   const [aqi, setAqi] = useState<number | null>(null)
+  const apiKey = process.env.NEXT_PUBLIC_OPENWEATHER_API_KEY
 
   const fetchWeather = async (city: string) => {
   if (!city) return
   try {
     // fetch weather
     const res = await fetch(
-      `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=b5be6ad8befee046a1e1e4f4e921f49c`
+      `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${apiKey}`
     )
     if (!res.ok) throw new Error('City not found')
     const data = await res.json()
@@ -27,7 +28,7 @@ export default function Home() {
     // fetch AQI using coords
     const { lat, lon } = data.coord
     const aqiRes = await fetch(
-      `http://api.openweathermap.org/data/2.5/air_pollution?lat=${lat}&lon=${lon}&appid=b5be6ad8befee046a1e1e4f4e921f49c`
+      `http://api.openweathermap.org/data/2.5/air_pollution?lat=${lat}&lon=${lon}&appid=${apiKey}`
     )
     const aqiData = await aqiRes.json()
     // aqi value: aqiData.list[0].main.aqi

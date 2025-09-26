@@ -4,6 +4,7 @@ import { useState } from 'react'
 export default function Header({ onSearch }: { onSearch: (city: string) => void }) {
   const [input, setInput] = useState('')
   const [suggestions, setSuggestions] = useState<any[]>([])
+  const apiKey = process.env.NEXT_PUBLIC_OPENWEATHER_API_KEY
 
   const fetchSuggestions = async (query: string) => {
     if (!query) {
@@ -12,7 +13,7 @@ export default function Header({ onSearch }: { onSearch: (city: string) => void 
     }
     try {
       const res = await fetch(
-        `http://api.openweathermap.org/geo/1.0/direct?q=${query}&limit=5&appid=b5be6ad8befee046a1e1e4f4e921f49c`
+        `http://api.openweathermap.org/geo/1.0/direct?q=${query}&limit=5&appid=${apiKey}`
       )
       const data = await res.json()
       setSuggestions(data)
@@ -35,10 +36,11 @@ export default function Header({ onSearch }: { onSearch: (city: string) => void 
     setSuggestions([])
   }
 
-  return  (<div className="flex justify-between items-center p-4 bg-[#E4D9FF] border-b-1 border-[#30343F] text-white relative">
+  return (
+    <div className="flex justify-between items-center p-4 bg-[#E4D9FF] border-b-2 border-[#30343F] text-white relative shadow-lg">
       <h1 className="text-2xl text-[#30343F] font-bold">Weather App</h1>
-      <div className="flex flex-col gap-2">
-        <div className="flex gap-2">
+      <div className="flex flex-col gap-2 relative">
+        <div className="flex gap-4">
           <input
             type="text"
             placeholder="Search City"
@@ -52,22 +54,22 @@ export default function Header({ onSearch }: { onSearch: (city: string) => void 
                     handleSearch();
                 }
             }}
-            className="p-2 rounded border-1 border-[#30343F] text-black"
+            className="p-3 rounded-lg border-2 border-transparent focus:outline-none focus:border-[#30343F] transition-colors duration-300 shadow-md text-black"
           />
           <button
             onClick={handleSearch}
-            className="bg-[#30343F] px-4 py-2 rounded hover:bg-[#bd2525]"
+            className="bg-[#30343F] px-6 py-3 rounded-lg hover:bg-[#bd2525] transition-all duration-300 ease-in-out transform hover:scale-105 shadow-md font-semibold"
           >
             Search
           </button>
         </div>
         {suggestions.length > 0 && (
-          <ul className="absolute top-16 right-40 bg-white border border-gray-300 rounded-lg shadow-lg w-fit z-10 p-2 text-black">
+          <ul className="absolute top-full mt-2 w-full bg-white border border-gray-300 rounded-lg shadow-lg z-10 p-2 text-black">
             {suggestions.map((city) => (
               <li
                 key={city.lat + city.lon}
                 onClick={() => handleSelectSuggestion(city.name)}
-                className="cursor-pointer p-2 hover:bg-gray-200 rounded-md"
+                className="cursor-pointer p-2 hover:bg-gray-200 rounded-md transition-colors duration-200"
               >
                 {city.name}, {city.country}
               </li>
